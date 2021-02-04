@@ -1,0 +1,83 @@
+name: Docker
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [7.2, 7.3, 7.4, "8.0"]
+    steps:
+      - uses: actions/checkout@v2
+
+      - id: check_envsubst
+        name: Check for envsubst
+        continue-on-error: true
+        run: envsubst --version
+
+      - id: install_envsubst_ubuntu
+        name: Install envsubst (Ubuntu)
+        if: steps.check_envsubst.outcome == 'failure' && contains(matrix.platform, 'ubuntu')
+        run: sudo apt-get install envsubst
+      - name: "Version Change"
+        run: |
+          export VERSION=${{ matrix.version }}
+          envsubst < Dockerfile.tpl | tee Dockerfile
+
+      - name: Run tests
+        run: |
+          if [ -f docker-compose.test.yml ]; then
+            docker-compose --file docker-compose.test.yml build
+            docker-compose --file docker-compose.test.yml run sut
+          else
+            export IMAGE_NAME=ci_php:${{ matrix.version }}
+            docker build . --file Dockerfile --tag $IMAGE_NAME
+            docker run --rm $IMAGE_NAME php -v
+            docker run --rm $IMAGE_NAME php -m
+            docker run --rm $IMAGE_NAME php -i
+          fi
+
+  # Push image to GitHub Packages.
+  # See also https://docs.docker.com/docker-hub/builds/
+  push:
+    # Ensure test job passes before pushing image.
+    needs: test
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [7.2, 7.3, 7.4, "8.0"]
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Build Version Change"
+        run: |
+          export VERSION=${{ matrix.version }}
+          envsubst < Dockerfile.tpl | tee Dockerfile
+
+      - name: Build image
+        run: |
+          export IMAGE_NAME=ci_php:${{ matrix.version }}
+          docker build . --file Dockerfile --tag $IMAGE_NAME
+
+      - name: Log into registry
+        run: echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+      - name: Push image
+        run: |
+          export IMAGE_NAME=ci_php:${{ matrix.version }}
+          export IMAGE_ID=ghcr.io/${{ github.repository }}:${{ matrix.version }}
+
+          # Change all uppercase to lowercase
+          export IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          echo $IMAGE_ID
+
+          docker tag $IMAGE_NAME $IMAGE_ID
+          docker push $IMAGE_ID
