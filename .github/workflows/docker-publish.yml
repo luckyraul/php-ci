@@ -76,7 +76,7 @@ jobs:
       - name: Push image
         run: |
           export IMAGE_NAME=ci_php:${{ matrix.version }}
-          export IMAGE_ID=ghcr.io/${{ github.repository }}:${{ matrix.version }}
+          export IMAGE_ID=ghcr.io/${{ github.repository }}:${{ matrix.version }}-ci
 
           # Change all uppercase to lowercase
           export IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
