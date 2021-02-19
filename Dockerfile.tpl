@@ -9,6 +9,9 @@ RUN apt-get -qq update && \
     apt-get -qqy install libxml2-dev libxslt-dev libpng-dev libjpeg-dev libzip-dev unzip && \
     curl -s -o /usr/local/bin/composer https://getcomposer.org/composer-1.phar && \
     chmod 0755 /usr/local/bin/composer && \
+    composer global require symfony/console && \
+    composer global require guzzlehttp/guzzle && \
+    echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> ~/.bashrc && \
     apt-get -qqy autoremove && \
     apt-get clean
 
