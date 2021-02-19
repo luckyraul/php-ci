@@ -1,5 +1,7 @@
 FROM php:${VERSION}-cli
 
+ENV VAULT_VERSION 1.6.2
+
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
 RUN apt-get -qq update && \
@@ -9,6 +11,11 @@ RUN apt-get -qq update && \
     chmod 0755 /usr/local/bin/composer && \
     apt-get -qqy autoremove && \
     apt-get clean
+
+RUN curl -O https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip && \
+    unzip vault_${VAULT_VERSION}_linux_amd64.zip -d /usr/local/bin/ && \
+    chmod +x /usr/local/bin/vault && \
+    rm -f vault_${VAULT_VERSION}_linux_amd64.zip
 
 RUN docker-php-ext-install soap && \
     docker-php-ext-install bcmath && \
