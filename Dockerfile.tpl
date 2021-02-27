@@ -1,6 +1,7 @@
 FROM php:${VERSION}-cli
 
 ENV VAULT_VERSION 1.6.2
+ENV WAYPOINT_VERSION 0.2.3
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
@@ -19,6 +20,11 @@ RUN curl -O https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_
     unzip vault_${VAULT_VERSION}_linux_amd64.zip -d /usr/local/bin/ && \
     chmod +x /usr/local/bin/vault && \
     rm -f vault_${VAULT_VERSION}_linux_amd64.zip
+
+RUN curl -O https://releases.hashicorp.com/waypoint/${WAYPOINT_VERSION}/waypoint_${WAYPOINT_VERSION}_linux_amd64.zip && \
+    unzip waypoint_${WAYPOINT_VERSION}_linux_amd64.zip -d /usr/local/bin/ && \
+    chmod +x /usr/local/bin/waypoint && \
+    rm -f waypoint_${WAYPOINT_VERSION}_linux_amd64.zip
 
 RUN docker-php-ext-install soap && \
     docker-php-ext-install bcmath && \
