@@ -1,13 +1,13 @@
 FROM php:${VERSION}-cli
 
-ENV VAULT_VERSION 1.6.2
-ENV WAYPOINT_VERSION 0.2.3
+ENV VAULT_VERSION 1.7.1
+ENV WAYPOINT_VERSION 0.3.1
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
 RUN apt-get -qq update && \
     apt-get -qqy install git openssh-client && \
-    apt-get -qqy install libxml2-dev libxslt-dev libpng-dev libjpeg-dev libzip-dev unzip && \
+    apt-get -qqy install libxml2-dev libxslt-dev libpng-dev libjpeg-dev libzip-dev unzip libldap2-dev libldb-dev && \
     curl -s -o /usr/local/bin/composer https://getcomposer.org/composer-1.phar && \
     chmod 0755 /usr/local/bin/composer && \
     composer global require symfony/console && \
@@ -33,5 +33,7 @@ RUN docker-php-ext-install soap && \
     docker-php-ext-install xsl && \
     docker-php-ext-install pcntl && \
     docker-php-ext-install gd && \
+    docker-php-ext-install ldap && \
+    docker-php-ext-install exif && \
     docker-php-ext-install zip && \
     docker-php-ext-install sockets
