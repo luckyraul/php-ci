@@ -39,3 +39,5 @@ RUN docker-php-ext-install soap && \
     docker-php-ext-install exif && \
     docker-php-ext-install zip && \
     docker-php-ext-install sockets
+
+RUN echo "memory_limit=256M" >> /usr/local/etc/php/conf.d/memory_limit.ini
