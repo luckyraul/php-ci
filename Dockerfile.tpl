@@ -1,7 +1,7 @@
 FROM php:${VERSION}-cli
 
-ENV VAULT_VERSION 1.7.1
-ENV WAYPOINT_VERSION 0.3.1
+ENV VAULT_VERSION 1.9.0
+ENV WAYPOINT_VERSION 0.6.2
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
@@ -40,4 +40,4 @@ RUN docker-php-ext-install soap && \
     docker-php-ext-install zip && \
     docker-php-ext-install sockets
 
-RUN echo "memory_limit=256M" >> /usr/local/etc/php/conf.d/memory_limit.ini
+RUN echo "memory_limit=-1" >> /usr/local/etc/php/conf.d/memory_limit.ini
