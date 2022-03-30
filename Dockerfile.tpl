@@ -1,13 +1,13 @@
 FROM php:${VERSION}-cli
 
-ENV VAULT_VERSION 1.9.3
-ENV WAYPOINT_VERSION 0.7.1
+ENV VAULT_VERSION 1.10.0
+ENV WAYPOINT_VERSION 0.7.2
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
 RUN apt-get -qq update && \
-    apt-get -qqy install git openssh-client && \
-    apt-get -qqy install libxml2-dev libxslt-dev libpng-dev libjpeg-dev libzip-dev unzip libldap2-dev libc-client-dev libkrb5-dev && \
+    apt-get -qqy install git openssh-client imagemagick && \
+    apt-get -qqy install libxml2-dev libxslt-dev libpng-dev libjpeg-dev libzip-dev unzip libldap2-dev libc-client-dev libkrb5-dev libmagickwand-dev && \
     curl -s -o /usr/local/bin/composer https://getcomposer.org/composer-1.phar && \
     chmod 0755 /usr/local/bin/composer && \
     composer global require symfony/console && \
@@ -38,6 +38,8 @@ RUN docker-php-ext-install soap && \
     docker-php-ext-install imap && \
     docker-php-ext-install exif && \
     docker-php-ext-install zip && \
-    docker-php-ext-install sockets
+    docker-php-ext-install sockets && \
+    pecl install imagick && \
+    docker-php-ext-enable imagick
 
 RUN echo "memory_limit=-1" >> /usr/local/etc/php/conf.d/memory_limit.ini
