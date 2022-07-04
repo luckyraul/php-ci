@@ -1,7 +1,7 @@
 FROM php:${VERSION}-cli
 
-ENV VAULT_VERSION 1.10.0
-ENV WAYPOINT_VERSION 0.7.2
+ENV VAULT_VERSION 1.11.0
+ENV WAYPOINT_VERSION 0.8.2
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
