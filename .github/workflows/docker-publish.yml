@@ -47,3 +47,8 @@ jobs:
 
           docker tag $IMAGE_NAME $IMAGE_ID
           docker push $IMAGE_ID
+      - name: Test Image PHP Version
+        run: docker run --rm ci_php:${{ matrix.version }} php -v
+
+      - name: Test Image composer Version
+        run: docker run --rm ci_php:${{ matrix.version }} composer -V
