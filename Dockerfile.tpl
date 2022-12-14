@@ -1,7 +1,7 @@
 FROM php:${VERSION}-cli
 
-ENV VAULT_VERSION 1.11.0
-ENV WAYPOINT_VERSION 0.9.0
+ENV VAULT_VERSION 1.12.2
+ENV WAYPOINT_VERSION 0.10.4
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
@@ -12,6 +12,7 @@ RUN apt-get -qq update && \
     chmod 0755 /usr/local/bin/composer && \
     export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") && \
     if [ "$PHP_VERSION" = "8.1" ];then composer self-update --2;fi && \
+    if [ "$PHP_VERSION" = "8.2" ];then composer self-update --2;fi && \
     composer global require symfony/console && \
     composer global require guzzlehttp/guzzle && \
     echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> ~/.bashrc && \
