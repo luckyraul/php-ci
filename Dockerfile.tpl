@@ -1,17 +1,14 @@
 FROM php:${VERSION}-cli
 
-ENV VAULT_VERSION 1.14.0
+ENV VAULT_VERSION 1.15.4
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
 RUN apt-get -qq update && \
     apt-get -qqy install git openssh-client imagemagick && \
     apt-get -qqy install libxml2-dev libxslt-dev libpng-dev libjpeg-dev libzip-dev unzip libldap2-dev libc-client-dev libkrb5-dev libmagickwand-dev && \
-    curl -s -o /usr/local/bin/composer https://getcomposer.org/composer-1.phar && \
+    curl -s -o /usr/local/bin/composer https://getcomposer.org/download/latest-2.2.x/composer.phar && \
     chmod 0755 /usr/local/bin/composer && \
-    export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") && \
-    if [ "$PHP_VERSION" = "8.1" ];then composer self-update --2;fi && \
-    if [ "$PHP_VERSION" = "8.2" ];then composer self-update --2;fi && \
     composer global require symfony/console && \
     composer global require guzzlehttp/guzzle && \
     echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> ~/.bashrc && \
