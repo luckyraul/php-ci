@@ -1,0 +1,65 @@
+name: Aptly
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Configure GPG Key
+        run: |
+          export GPG_TTY=$(tty)
+          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import --batch
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+      - name: 'Prepare' #"logLevel": "debug",
+        run: |
+          echo '{
+            "architectures": ["amd64", "arm64"],
+            "SwiftPublishEndpoints": {
+              "apt": {
+                "container": "${{ secrets.CONTAINER }}",
+                "prefix": "php"
+              }
+            }
+          }' > ~/.aptly.conf
+          cat ~/.aptly.conf
+          sudo apt-get update
+          sudo apt-get -qqy install wget
+          sudo apt-get install -qqy aptly
+          wget https://packages.sury.org/php/apt.gpg
+          gpg --no-default-keyring --keyring ./apt.gpg --export | gpg --no-default-keyring --keyring trustedkeys.gpg --import
+      - name: 'Aptly run bullseye'
+        run: |
+          aptly mirror create -filter="Section (php), (Name (% php8.*)|Name (% php5.6*)|Name (% php7.4*))" -filter-with-deps php-bullseye-main https://packages.sury.org/php/ bullseye main
+          aptly mirror update php-bullseye-main
+          aptly snapshot create php-bullseye-snap from mirror php-bullseye-main
+      - name: 'Aptly run bookworm'
+        run: |
+          aptly mirror create -filter="Section (php), (Name (% php8.*)|Name (% php5.6*)|Name (% php7.4*))" -filter-with-deps php-bookworm-main https://packages.sury.org/php/ bookworm main
+          aptly mirror update php-bookworm-main
+          aptly snapshot create php-bookworm-snap from mirror php-bookworm-main
+      - name: 'Aptly publish bullseye'
+        run: 'aptly publish snapshot -component="php" -batch -distribution=bullseye -passphrase="${{ secrets.GPG_PASSWORD }}" php-bullseye-snap swift:apt:'
+        env:
+          OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
+          OS_PASSWORD: ${{ secrets.OS_PASSWORD }}
+          OS_REGION_NAME: ${{ secrets.OS_REGION_NAME }}
+          OS_TENANT_ID: ${{ secrets.OS_TENANT_ID }}
+          OS_USERNAME: ${{ secrets.OS_USERNAME }}
+      - name: 'Aptly publish bookworm'
+        run: 'aptly publish snapshot -component="php" -batch -distribution=bookworm -passphrase="${{ secrets.GPG_PASSWORD }}" php-bookworm-snap swift:apt:'
+        env:
+          OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
+          OS_PASSWORD: ${{ secrets.OS_PASSWORD }}
+          OS_REGION_NAME: ${{ secrets.OS_REGION_NAME }}
+          OS_TENANT_ID: ${{ secrets.OS_TENANT_ID }}
+          OS_USERNAME: ${{ secrets.OS_USERNAME }}

@@ -1,6 +1,6 @@
 FROM php:${VERSION}-cli
 
-ENV VAULT_VERSION 1.15.4
+ENV VAULT_VERSION 1.17.2
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
