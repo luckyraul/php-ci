@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-    if: github.event_name == 'push'
 
     steps:
       - name: Configure GPG Key
