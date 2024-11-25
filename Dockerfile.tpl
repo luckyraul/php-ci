@@ -1,6 +1,6 @@
 FROM php:${VERSION}-cli
 
-ENV VAULT_VERSION 1.17.2
+ENV VAULT_VERSION 1.18.2
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
@@ -28,8 +28,8 @@ RUN docker-php-ext-install soap && \
     docker-php-ext-install pcntl && \
     docker-php-ext-install gd && \
     docker-php-ext-install ldap && \
-    docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
-    docker-php-ext-install imap && \
+    if [ "${VERSION}" != "8.4" ]; then docker-php-ext-configure imap --with-kerberos --with-imap-ssl; fi && \
+    if [ "${VERSION}" != "8.4" ]; then docker-php-ext-install imap; fi && \
     docker-php-ext-install exif && \
     docker-php-ext-install zip && \
     docker-php-ext-install sockets && \

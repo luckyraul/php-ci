@@ -23,6 +23,7 @@ jobs:
         run: |
           echo '{
             "architectures": ["amd64", "arm64"],
+            "logLevel": "debug",
             "SwiftPublishEndpoints": {
               "apt": {
                 "container": "${{ secrets.CONTAINER }}",
@@ -31,21 +32,23 @@ jobs:
             }
           }' > ~/.aptly.conf
           cat ~/.aptly.conf
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A0546A43624A8331
+          echo 'deb http://repo.aptly.info/ squeeze main' | sudo tee -a /etc/apt/sources.list.d/aptly.list
           sudo apt-get update
           sudo apt-get -qqy install wget
           sudo apt-get install -qqy aptly
           wget https://packages.sury.org/php/apt.gpg
           gpg --no-default-keyring --keyring ./apt.gpg --export | gpg --no-default-keyring --keyring trustedkeys.gpg --import
-      - name: 'Aptly run bullseye'
-        run: |
-          aptly mirror create -filter="Section (php), (Name (% php8.*)|Name (% php5.6*)|Name (% php7.4*))" -filter-with-deps php-bullseye-main https://packages.sury.org/php/ bullseye main
-          aptly mirror update php-bullseye-main
-          aptly snapshot create php-bullseye-snap from mirror php-bullseye-main
       - name: 'Aptly run bookworm'
         run: |
           aptly mirror create -filter="Section (php), (Name (% php8.*)|Name (% php5.6*)|Name (% php7.4*))" -filter-with-deps php-bookworm-main https://packages.sury.org/php/ bookworm main
           aptly mirror update php-bookworm-main
           aptly snapshot create php-bookworm-snap from mirror php-bookworm-main
+      - name: 'Aptly run bullseye'
+        run: |
+          aptly mirror create -filter="Section (php), (Name (% php8.*)|Name (% php5.6*)|Name (% php7.4*))" -filter-with-deps php-bullseye-main https://packages.sury.org/php/ bullseye main
+          aptly mirror update php-bullseye-main
+          aptly snapshot create php-bullseye-snap from mirror php-bullseye-main
       - name: 'Aptly publish bullseye'
         run: 'aptly publish snapshot -component="php" -batch -distribution=bullseye -passphrase="${{ secrets.GPG_PASSWORD }}" php-bullseye-snap swift:apt:'
         env:
