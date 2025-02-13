@@ -1,11 +1,11 @@
 FROM php:${VERSION}-cli
 
-ENV VAULT_VERSION 1.18.2
+ENV VAULT_VERSION 1.18.4
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
 RUN apt-get -qq update && \
-    apt-get -qqy install git openssh-client imagemagick && \
+    apt-get -qqy install git wget openssh-client imagemagick && \
     apt-get -qqy install libxml2-dev libxslt-dev libpng-dev libjpeg-dev libzip-dev unzip libldap2-dev libc-client-dev libkrb5-dev libmagickwand-dev && \
     curl -s -o /usr/local/bin/composer https://getcomposer.org/download/latest-2.2.x/composer.phar && \
     chmod 0755 /usr/local/bin/composer && \
