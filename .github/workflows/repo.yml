@@ -44,21 +44,34 @@ jobs:
           aptly mirror create -filter="Section (php), (Name (% php8.*)|Name (% php5.6*)|Name (% php7.4*))" -filter-with-deps php-bookworm-main https://packages.sury.org/php/ bookworm main
           aptly mirror update php-bookworm-main
           aptly snapshot create php-bookworm-snap from mirror php-bookworm-main
+      - name: 'Aptly run trixie'
+        run: |
+          aptly mirror create -filter="Section (php), Name (% php8.*)" -filter-with-deps php-trixie-main https://packages.sury.org/php/ trixie main
+          aptly mirror update php-trixie-main
+          aptly snapshot create php-trixie-snap from mirror php-trixie-main
       - name: 'Aptly run bullseye'
         run: |
           aptly mirror create -filter="Section (php), (Name (% php8.*)|Name (% php5.6*)|Name (% php7.4*))" -filter-with-deps php-bullseye-main https://packages.sury.org/php/ bullseye main
           aptly mirror update php-bullseye-main
           aptly snapshot create php-bullseye-snap from mirror php-bullseye-main
-      - name: 'Aptly publish bullseye'
-        run: 'aptly publish snapshot -component="php" -batch -distribution=bullseye -passphrase="${{ secrets.GPG_PASSWORD }}" php-bullseye-snap swift:apt:'
+      - name: 'Aptly publish bookworm'
+        run: 'aptly publish snapshot -component="php" -batch -distribution=bookworm -passphrase="${{ secrets.GPG_PASSWORD }}" php-bookworm-snap swift:apt:'
         env:
           OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
           OS_PASSWORD: ${{ secrets.OS_PASSWORD }}
           OS_REGION_NAME: ${{ secrets.OS_REGION_NAME }}
           OS_TENANT_ID: ${{ secrets.OS_TENANT_ID }}
           OS_USERNAME: ${{ secrets.OS_USERNAME }}
-      - name: 'Aptly publish bookworm'
-        run: 'aptly publish snapshot -component="php" -batch -distribution=bookworm -passphrase="${{ secrets.GPG_PASSWORD }}" php-bookworm-snap swift:apt:'
+      - name: 'Aptly publish trixie'
+        run: 'aptly publish snapshot -component="php" -batch -distribution=trixie -passphrase="${{ secrets.GPG_PASSWORD }}" php-trixie-snap swift:apt:'
+        env:
+          OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
+          OS_PASSWORD: ${{ secrets.OS_PASSWORD }}
+          OS_REGION_NAME: ${{ secrets.OS_REGION_NAME }}
+          OS_TENANT_ID: ${{ secrets.OS_TENANT_ID }}
+          OS_USERNAME: ${{ secrets.OS_USERNAME }}
+      - name: 'Aptly publish bullseye'
+        run: 'aptly publish snapshot -component="php" -batch -distribution=bullseye -passphrase="${{ secrets.GPG_PASSWORD }}" php-bullseye-snap swift:apt:'
         env:
           OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
           OS_PASSWORD: ${{ secrets.OS_PASSWORD }}
