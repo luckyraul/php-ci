@@ -1,6 +1,6 @@
 FROM php:${VERSION}-cli
 
-ENV VAULT_VERSION 1.18.5
+ENV VAULT_VERSION 1.21.1
 
 LABEL org.opencontainers.image.source https://github.com/luckyraul/php-ci
 
@@ -24,18 +24,15 @@ RUN docker-php-ext-install soap && \
     docker-php-ext-install bcmath && \
     docker-php-ext-install pdo_mysql && \
     docker-php-ext-install intl && \
-    if [ "${VERSION}" != "8.4" ]; then docker-php-ext-configure ftp --with-openssl-dir=/usr; fi && \
     docker-php-ext-install ftp && \
     docker-php-ext-install xsl && \
     docker-php-ext-install pcntl && \
     docker-php-ext-install gd && \
     docker-php-ext-install ldap && \
-    if [ "${VERSION}" != "8.4" ]; then docker-php-ext-configure imap --with-kerberos --with-imap-ssl; fi && \
-    if [ "${VERSION}" != "8.4" ]; then docker-php-ext-install imap; fi && \
     docker-php-ext-install exif && \
     docker-php-ext-install zip && \
     docker-php-ext-install sockets && \
-    pecl install imagick-3.8.0RC2 && \
+    pecl install imagick && \
     docker-php-ext-enable imagick
 
 RUN echo "memory_limit=-1" >> /usr/local/etc/php/conf.d/memory_limit.ini

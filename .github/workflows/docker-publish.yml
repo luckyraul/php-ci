@@ -12,15 +12,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [8.1, 8.2, 8.3, 8.4]
+        version: [8.1, 8.2, 8.3, 8.4, 8.5]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: 'Build Version Change'
         run: |
           export VERSION=${{ matrix.version }}
-          envsubst '$VERSION' < Dockerfile.tpl | tee Dockerfile
+          envsubst '$VERSION' < Dockerfile.${{ matrix.version }}.tpl | tee Dockerfile
 
       - name: Build image
         run: |
