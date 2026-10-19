@@ -30,8 +30,6 @@ RUN docker-php-ext-install soap && \
     docker-php-ext-install pcntl && \
     docker-php-ext-install gd && \
     docker-php-ext-install ldap && \
-    docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
-    docker-php-ext-install imap && \
     docker-php-ext-install exif && \
     docker-php-ext-install zip && \
     docker-php-ext-install sockets && \

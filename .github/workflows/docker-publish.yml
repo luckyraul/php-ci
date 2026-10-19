@@ -15,7 +15,7 @@ jobs:
         version: [8.1, 8.2, 8.3, 8.4, 8.5]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: 'Build Version Change'
         run: |
@@ -28,7 +28,7 @@ jobs:
           docker build . --file Dockerfile --tag $IMAGE_NAME
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -56,16 +56,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete untagged ghcr LR
-        uses: Chizkiyahu/delete-untagged-ghcr-action@v3
+        uses: Chizkiyahu/delete-untagged-ghcr-action@v6
         with:
           token: ${{ secrets.CR_PAT }}
           repository_owner: ${{ github.repository_owner }}
           owner_type: user
           package_name: php
       - name: Delete untagged ghcr Mygento
-        uses: Chizkiyahu/delete-untagged-ghcr-action@v3
+        uses: Chizkiyahu/delete-untagged-ghcr-action@v6
         with:
           token: ${{ secrets.CR_PAT }}
           repository_owner: mygento
           owner_type: org
           package_name: php
+          repository: ''
