@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
 
@@ -32,8 +32,8 @@ jobs:
             }
           }' > ~/.aptly.conf
           cat ~/.aptly.conf
-          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A0546A43624A8331
-          echo 'deb http://repo.aptly.info/ squeeze main' | sudo tee -a /etc/apt/sources.list.d/aptly.list
+          sudo wget -O /etc/apt/keyrings/aptly.asc https://www.aptly.info/pubkey.txt
+          echo 'deb [signed-by=/etc/apt/keyrings/aptly.asc] http://repo.aptly.info/ squeeze main' | sudo tee -a /etc/apt/sources.list.d/aptly.list
           sudo apt-get update
           sudo apt-get -qqy install wget
           sudo apt-get install -qqy aptly
